@@ -1,17 +1,11 @@
 import java.util.*;
 
-// Wprowadzamy dodatkowe uogólnienie, dla większej manipulacji listą termów.
 interface Calc {
-
     int priority();
-
     List<Calc> calculcate(List<Calc> termList, int currentIndex);
-
 }
 
 abstract class BracketCalc implements Calc {
-
-
     @Override
     public List<Calc> calculcate(List<Calc> termList, int currentIndex) {
         int endIdx = 0;
@@ -20,14 +14,11 @@ abstract class BracketCalc implements Calc {
             if (termList.get(i) instanceof BeginSquarebrackets) {
                 endIdx = i;
             }
-
             if (termList.get(i) instanceof BeginBracketCalc) {
                 endIdx = i;
             }
-
         }
         System.out.println("endIdx po pentli for " + endIdx);
-
         int backBr = 0;
         for (int j = endIdx; j < termList.size(); j++) {
             if (termList.get(j) instanceof EndBracketCalc) {
@@ -41,9 +32,7 @@ abstract class BracketCalc implements Calc {
         }
 
         List<Calc> calcs = termList.subList(endIdx + 1, backBr);
-
         ArrayList<Calc> newCalcs = new ArrayList<>();
-
         if (endIdx != 0) {
             newCalcs.addAll(termList.subList(0, endIdx));
         }
@@ -55,18 +44,13 @@ abstract class BracketCalc implements Calc {
 }
 
 class BeginBracketCalc extends BracketCalc {
-
-
     @Override
     public int priority() {
         return 1000;
     }
-
-
 }
 
 class EndBracketCalc extends BracketCalc {
-
     @Override
     public int priority() {
         return 1000;
@@ -74,13 +58,10 @@ class EndBracketCalc extends BracketCalc {
 }
 
 class BeginSquarebrackets extends BracketCalc {
-
     @Override
     public int priority() {
         return 1001;
     }
-
-
 }
 
 class EndSquareBrackets extends BracketCalc {
@@ -92,7 +73,6 @@ class EndSquareBrackets extends BracketCalc {
 }
 
 abstract class Term implements Calc {
-
     @Override
     public List<Calc> calculcate(List<Calc> termList, int index) {
         Calc term = termList.get(index);
@@ -104,18 +84,15 @@ abstract class Term implements Calc {
         termList.add(index - 1, calculatedTerm);
         return termList;
     }
-
     abstract public Term calculcate(Calc term1, Calc term2);
 }
 
 class NumberTerm extends Term {
-
     private double number;
 
     public NumberTerm(double term) {
         this.number = term;
     }
-
     public double getNumber() {
         return number;
     }
@@ -156,7 +133,6 @@ class Div extends Term {
     public Term calculcate(Calc term1, Calc term2) {
         NumberTerm termFirst = (NumberTerm) term1;
         NumberTerm termSecond = (NumberTerm) term2;
-
         System.out.println("first number" + termFirst.getNumber());
         System.out.println("secend number" + termSecond.getNumber());
         NumberTerm div = new NumberTerm(termFirst.getNumber() / termSecond.getNumber());
@@ -202,7 +178,6 @@ class SubtractionTerm extends Term {
         System.out.println("Diff: " + diff.getSum());
         return diff;
     }
-
 }
 
 class AdditionTerm extends Term {
@@ -229,7 +204,6 @@ class CalcFactory {
     private Map<String, Calc> register;
 
     public CalcFactory() {
-
         register = new HashMap<>();
         register.put("[", new BeginSquarebrackets());
         register.put("]", new EndSquareBrackets());
@@ -239,7 +213,6 @@ class CalcFactory {
         register.put("-", new SubtractionTerm());
         register.put("*", new MultiTerm());
         register.put("/", new Div());
-
     }
 
     public Calc createCalc(String term) {
@@ -251,9 +224,7 @@ class CalcFactory {
 }
 
 class Evaluator {
-
     private String toCalculate;
-
     private List<Calc> calcs;
 
     Evaluator(String toCalculate) {
@@ -268,7 +239,6 @@ class Evaluator {
         if (calcs == null) {
             List<String> split = Arrays.asList(toCalculate.split(" "));
             calcs = new LinkedList<>();
-
             CalcFactory calcFactory = new CalcFactory();
             for (String term : split) {
                 calcs.add(calcFactory.createCalc(term));
@@ -276,11 +246,9 @@ class Evaluator {
         }
 
         while (calcs.size() > 2) {
-
             Calc maxTerm = calcs.get(0);
             int maxTermprio = calcs.get(0).priority();
             int index = 0;
-
             for (int i = 0; i < calcs.size(); i++) {
                 if (calcs.get(i).priority() > maxTermprio) {
                     maxTermprio = calcs.get(i).priority();
@@ -288,7 +256,6 @@ class Evaluator {
                     index = i;
                 }
             }
-
             calcs = maxTerm.calculcate(calcs, index);
         }
 
